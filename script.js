@@ -24,11 +24,12 @@ let textArea = document.getElementById('text-area'),
 
 let gameStarted = false,
 	gameOver = false,
-	victory = false,
+	playerWon = false,
 	playerCards = [],
 	dealerCards = [],
 	dealerScore = 0,
 	playerScore = 0,
+	tie,
 	deck = [];
 
 
@@ -38,12 +39,8 @@ showStatus();
 
 newGame.addEventListener('click', function() {
 	gameStarted = true;
-	victory = false;
+	playerWon = false;
 	gameOver = false;
-
-	// if(gameStarted) {
-		// console.log('game sta');
-	// };
 
 	deck = createDeck();
 	shuffleDeck(deck);
@@ -51,12 +48,25 @@ newGame.addEventListener('click', function() {
 	dealerCards = [getNextCard(), getNextCard()];
 
 	newGame.style.display = 'none';
-	// newGame.setAttribute('style', 'display: none');
 	hitButton.style.display = 'inline';
 	stayButton.style.display = 'inline';
 	showStatus();
 
 });
+
+hitButton.addEventListener('click', function() {
+	playerCards.push(getNextCard());
+	// console.log(playerCards);
+	checkForGameEnd();
+	showStatus();
+})
+
+stayButton.addEventListener('click', function() {
+	gameOver = true;
+	checkForGameEnd();
+	showStatus();
+
+})
 
 
 /*
@@ -95,7 +105,6 @@ function getCardString(card) {
 	return cardString;
 }
 
-// deck = createDeck();
 
 /*
 getting next card to be selected by the player
@@ -138,7 +147,25 @@ function showStatus() {
 
 	'Player has: \n' +
 	playerCardString +
-	'(score: '+ playerScore +')\n\n'
+	'(score: '+ playerScore +')\n\n';
+
+	if(gameOver) {
+		if(playerWon){
+			textArea.innerText += 'YOU WIN!';
+		}
+
+		// TIE
+		else if(tie) {
+			textArea.innerText += 'A TIE!'
+		}
+
+		else {
+			textArea.innerText += 'DEALER WINS';
+		}
+		newGame.style.display = 'inline';
+		hitButton.style.display = 'none';
+		stayButton.style.display = 'none';
+	}
 }
 
 function updateScores() {
@@ -147,13 +174,14 @@ function updateScores() {
 	// console.log(dealerScore);
 }
 
+// getting the scores based on the card numeric value
 function getScore(cardArray) {
 	let score = 0;
 	let hasAce = false;
 	for(let card of cardArray) {
 		// console.log(card);
 		score += getCardNumericValue(card);
-		if(card.value = 'Ace') {
+		if(card.value === 'Ace') {
 			hasAce = true;
 		}
 	}
@@ -163,6 +191,7 @@ function getScore(cardArray) {
 	return score;
 }
 
+// Setting numeric values for each card
 function getCardNumericValue(card) {
 	switch(card.value) {
 		case 'Ace': 
@@ -185,6 +214,44 @@ function getCardNumericValue(card) {
 			return 9;
 		default:
 			return 10;
+	}
+}
+
+function checkForGameEnd() {
+	updateScores();
+
+	if(gameOver) {
+		// let dealer take cards
+		while(dealerScore < playerScore
+				&& playerScore <=21
+				&& dealerScore <= 21) {
+			dealerCards.push(getNextCard());
+			updateScores();
+		}
+	}
+
+	if(playerScore > 21) {
+		playerWon = false;
+		gameOver = true;
+	}
+	else if(dealerScore > 21) {
+		playerWon = true;
+		gameOver = true;
+	}
+	else if(gameOver) {
+
+		if(playerScore > dealerScore) {
+			playerWon = true;
+		}
+
+		// TIE
+		else if(playerScore === dealerScore) {
+			tie = true;
+		}
+		
+		else {
+			playerWon = false;
+		}
 	}
 }
 
