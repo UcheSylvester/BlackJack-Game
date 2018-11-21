@@ -30,6 +30,7 @@ let gameStarted = false,
 	dealerScore = 0,
 	playerScore = 0,
 	tie,
+	// blackJack,
 	deck = [];
 
 
@@ -159,6 +160,10 @@ function showStatus() {
 			textArea.innerText += 'A TIE!'
 		}
 
+		// else if (blackJack) {
+		// 	textArea.innerText += 'BLACKJACK! YOU WIN!'
+		// }
+
 		else {
 			textArea.innerText += 'DEALER WINS';
 		}
@@ -237,18 +242,37 @@ function checkForGameEnd() {
 	else if(dealerScore > 21) {
 		playerWon = true;
 		gameOver = true;
-	}
+	} 
+	// else if (playerScore === dealerScore) {
+	// 	gameOver = true;
+	// 	tie = true;
+	// }
+
+	// // BLACKJACK
+	// else if(playerScore === 21) {
+	// 	blackJack = true;
+	// 	gameOver = true;
+	// }
+	// else if(dealerScore === 21) {
+	// 	blackJack = true;
+	// 	gameOver = true;
+	// }
+		// TIE
+	// else if(playerScore === dealerScore) {
+	// 	tie = true;
+	// }
+
 	else if(gameOver) {
 
 		if(playerScore > dealerScore) {
 			playerWon = true;
 		}
 
-		// TIE
-		else if(playerScore === dealerScore) {
-			tie = true;
-		}
-		
+		// else if(playerScore === dealerScore) {
+		// 	tie = true;
+		// 	playerWon = false;
+		// }
+
 		else {
 			playerWon = false;
 		}
